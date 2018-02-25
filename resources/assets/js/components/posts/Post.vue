@@ -3,12 +3,13 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card card-default">
-                    <div class="card-header">Post list</div>
-
-                    <div v-for="post in posts" :key="post.id" class="bs-callout bs-callout-danger">
+                    <div class="card-header">
                         <h4>{{ post.title }}</h4>
-                        <hr>
-                        <p>{{ post.body }}</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="bs-callout bs-callout-danger">
+                            <p>{{ post.body }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -18,14 +19,14 @@
 
 <script>
     export default {
-        mounted() {
-            axios.get('/api/posts').then(response =>{
-                this.posts = response.data.data
+        created() {
+            axios.get('/api/posts/' + this.$route.params.id).then(response =>{
+                this.post = response.data
             })
         },
         data() {
             return {
-                posts : []
+                post : {}
             }
         }
     }
