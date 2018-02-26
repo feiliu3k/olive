@@ -5,8 +5,7 @@ import AuthUser from './modules/auth-user'
 
 Vue.use(Vuex)
 
-
-export default new Vue.Store({
+export default new Vuex.Store({
     modules : {
         AuthUser,
     }

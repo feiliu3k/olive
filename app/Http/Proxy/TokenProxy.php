@@ -6,10 +6,6 @@ class TokenProxy
 {
     protected $http;
 
-    /**
-     * TokenProxy constructor.
-     * @param $http
-     */
     public function __construct(\GuzzleHttp\Client $http)
     {
         $this->http = $http;

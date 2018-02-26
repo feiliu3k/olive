@@ -17,8 +17,8 @@
                 <!-- Right Side Of Navbar -->
                 <ul class="navbar-nav ml-auto">
                     <!-- Authentication Links -->
-                    <li><router-link  class="nav-link" to="/login">登录</router-link></li>
-                    <li><router-link  class="nav-link" to="/register">注册</router-link></li>
+                    <li><router-link v-if="!user.authenticated" class="nav-link" to="/login">登录</router-link></li>
+                    <li><router-link v-if="!user.authenticated" class="nav-link" to="/register">注册</router-link></li>
                 </ul>
             </div>
         </div>
@@ -26,11 +26,13 @@
 </template>
 
 <script>
+    import {mapstate} from 'vuex'
     export default {
-        name: "top-menu"
+        name: "top-menu",
+        computed: {
+            ...mapState({
+                user: state => state.AuthUser
+            })
+        }
     }
 </script>
-
-<style scoped>
-
-</style>
