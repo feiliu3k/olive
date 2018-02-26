@@ -44,17 +44,12 @@
         },
         methods: {
             login() {
-           let formData ={
+                let formData = {
                     email: this.email,
                     password: this.password
                 }
-                axios.post('/api/login', formData).then(response => {
-                    console.log(response.data)
-                    JWTToken.setToken(response.data.token)
-                    this.$store.state.authenticated = true
+                this.$store.dispatch('loginRequest', formData).then(response => {
                     this.$router.push({name: 'profile'})
-                }).catch(error => {
-                    console.log(error.response.data)
                 })
             }
         }
