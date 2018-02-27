@@ -519,7 +519,7 @@ module.exports = g;
         window.localStorage.setItem('jwt_token', token);
     },
     getToken: function getToken() {
-        window.localStorage.getItem('jwt_token');
+        return window.localStorage.getItem('jwt_token');
     },
     removeToken: function removeToken() {
         window.localStorage.removeItem('jwt_token');
@@ -50643,10 +50643,12 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 var routes = [{
     path: '/',
+    name: 'home',
     component: __webpack_require__(48),
     meta: {}
 }, {
     path: '/about',
+    name: 'about',
     component: __webpack_require__(54),
     meta: {}
 }, {
@@ -50658,12 +50660,12 @@ var routes = [{
     path: '/register',
     name: 'register',
     component: __webpack_require__(60),
-    meta: {}
+    meta: { requireGuest: true }
 }, {
     path: '/login',
     name: 'login',
     component: __webpack_require__(66),
-    meta: {}
+    meta: { requireGuest: true }
 }, {
     path: '/confirm',
     name: 'confirm',
@@ -50683,10 +50685,17 @@ var router = new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
 
 router.beforeEach(function (to, from, next) {
     if (to.meta.requireAuth) {
-        if (__WEBPACK_IMPORTED_MODULE_1__store_index__["a" /* default */].state.authenticated || __WEBPACK_IMPORTED_MODULE_2__helpers_jwt__["a" /* default */].getToken()) {
+        if (__WEBPACK_IMPORTED_MODULE_1__store_index__["a" /* default */].state.AuthUser.authenticated || __WEBPACK_IMPORTED_MODULE_2__helpers_jwt__["a" /* default */].getToken()) {
             return next();
         } else {
             return next({ 'name': 'login' });
+        }
+    }
+    if (to.meta.requireGuest) {
+        if (__WEBPACK_IMPORTED_MODULE_1__store_index__["a" /* default */].state.AuthUser.authenticated || __WEBPACK_IMPORTED_MODULE_2__helpers_jwt__["a" /* default */].getToken()) {
+            return next({ 'name': 'home' });
+        } else {
+            return next();
         }
     }
     next();
@@ -50716,10 +50725,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }),
     actions: {
         setAuthUser: function setAuthUser(_ref) {
-            var commit = _ref.commit,
-                dispatch = _ref.dispatch;
+            var commit = _ref.commit;
 
-            axios.get('/api/user').then(function (response) {
+            return axios.get('/api/user').then(function (response) {
                 commit({
                     type: __WEBPACK_IMPORTED_MODULE_0__mutation_type__["a" /* SET_AUTH_USER */],
                     user: response.data
@@ -50750,7 +50758,7 @@ var SET_AUTH_USER = 'SET_AUTH_USER';
         loginRequest: function loginRequest(_ref, formData) {
             var dispatch = _ref.dispatch;
 
-            axios.post('/api/login', formData).then(function (response) {
+            return axios.post('/api/login', formData).then(function (response) {
                 __WEBPACK_IMPORTED_MODULE_0__helpers_jwt__["a" /* default */].setToken(response.data.token);
                 dispatch('setAuthUser');
             }).catch(function (error) {
@@ -51959,12 +51967,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         login: function login() {
             var _this = this;
 
-            var formData = {
-                email: this.email,
-                password: this.password
-            };
-            this.$store.dispatch('loginRequest', formData).then(function (response) {
-                _this.$router.push({ name: 'profile' });
+            this.$validator.validateAll().then(function (result) {
+                if (result) {
+                    var formData = {
+                        email: _this.email,
+                        password: _this.password
+                    };
+                    _this.$store.dispatch('loginRequest', formData).then(function (response) {
+                        _this.$router.push({ name: 'profile' });
+                    });
+                }
             });
         }
     }
@@ -59460,6 +59472,7 @@ module.exports = Component.exports
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__common_TopMenu__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__common_TopMenu___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__common_TopMenu__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__helpers_jwt__ = __webpack_require__(3);
 //
 //
 //
@@ -59469,10 +59482,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "app",
+    created: function created() {
+        if (__WEBPACK_IMPORTED_MODULE_1__helpers_jwt__["a" /* default */].getToken()) {
+            this.$store.dispatch('setAuthUser');
+        }
+    },
+
     components: {
         TopMenu: __WEBPACK_IMPORTED_MODULE_0__common_TopMenu___default.a
     }
@@ -59571,7 +59591,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         user: function user(state) {
             return state.AuthUser;
         }
-    }))
+    })),
+    methods: {
+        logout: function logout() {}
+    }
 });
 
 /***/ }),
@@ -59657,11 +59680,23 @@ var render = function() {
                 1
               ),
               _vm._v(" "),
-              _vm.user.authenticated
-                ? _c("li", [
-                    _c("a", { attrs: { href: "#" } }, [_vm._v("退出")])
-                  ])
-                : _vm._e()
+              _c(
+                "li",
+                [
+                  _vm.user.authenticated
+                    ? _c(
+                        "router-link",
+                        {
+                          staticClass: "nav-link",
+                          attrs: { to: "#" },
+                          on: { click: _vm.logout }
+                        },
+                        [_vm._v("退出")]
+                      )
+                    : _vm._e()
+                ],
+                1
+              )
             ])
           ]
         )
