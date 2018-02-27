@@ -50709,6 +50709,8 @@ router.beforeEach(function (to, from, next) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mutation_type__ = __webpack_require__(46);
+var _mutations;
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -50718,11 +50720,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         name: null,
         email: null
     },
-    mutations: _defineProperty({}, __WEBPACK_IMPORTED_MODULE_0__mutation_type__["a" /* SET_AUTH_USER */], function (state, payload) {
+    mutations: (_mutations = {}, _defineProperty(_mutations, __WEBPACK_IMPORTED_MODULE_0__mutation_type__["a" /* SET_AUTH_USER */], function (state, payload) {
         state.authenticated = true;
         state.name = payload.user.name;
         state.email = payload.user.email;
-    }),
+    }), _defineProperty(_mutations, __WEBPACK_IMPORTED_MODULE_0__mutation_type__["b" /* UNSET_AUTH_USER */], function (state) {
+        state.authenticated = false;
+        state.name = null;
+        state.email = null;
+    }), _mutations),
     actions: {
         setAuthUser: function setAuthUser(_ref) {
             var commit = _ref.commit;
@@ -50732,6 +50738,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                     type: __WEBPACK_IMPORTED_MODULE_0__mutation_type__["a" /* SET_AUTH_USER */],
                     user: response.data
                 });
+            });
+        },
+        unsetAuthUser: function unsetAuthUser(_ref2) {
+            var commit = _ref2.commit;
+
+            commit({
+                type: __WEBPACK_IMPORTED_MODULE_0__mutation_type__["b" /* UNSET_AUTH_USER */]
             });
         }
     }
@@ -50743,7 +50756,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SET_AUTH_USER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return UNSET_AUTH_USER; });
 var SET_AUTH_USER = 'SET_AUTH_USER';
+var UNSET_AUTH_USER = 'UNSET_AUTH_USER';
 
 /***/ }),
 /* 47 */
@@ -50761,6 +50776,16 @@ var SET_AUTH_USER = 'SET_AUTH_USER';
             return axios.post('/api/login', formData).then(function (response) {
                 __WEBPACK_IMPORTED_MODULE_0__helpers_jwt__["a" /* default */].setToken(response.data.token);
                 dispatch('setAuthUser');
+            }).catch(function (error) {
+                console.log(error.response.data);
+            });
+        },
+        logoutRequest: function logoutRequest(_ref2) {
+            var dispatch = _ref2.dispatch;
+
+            return axios.post('/api/logout').then(function (response) {
+                dispatch('unsetAuthUser');
+                __WEBPACK_IMPORTED_MODULE_0__helpers_jwt__["a" /* default */].removeToken();
             }).catch(function (error) {
                 console.log(error.response.data);
             });
@@ -59593,7 +59618,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         }
     })),
     methods: {
-        logout: function logout() {}
+        logout: function logout() {
+            console.log('haha');
+        }
     }
 });
 

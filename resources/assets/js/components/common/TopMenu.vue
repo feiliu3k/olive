@@ -38,7 +38,7 @@
         },
         methods: {
             logout() {
-
+                console.log('haha')
             }
         }
     }
