@@ -27,6 +27,7 @@ class TokenProxy
 
         return response()->json([
             'token' => $token['access_token'],
+            'auth_id' => md5($token['refresh_token']),
             'expires_in' => $token['expires_in']
         ])->cookie('refreshToken', $token['refresh_token'], 144000, null, null, false, true);
     }
@@ -44,7 +45,37 @@ class TokenProxy
         return response()->json([
             'status' => false,
             'message' => 'Credentials not match'
-        ],421);
+        ], 421);
+    }
+
+    public function logout()
+    {
+        $user = auth()->guard('api')->user();
+
+        $access_token = $user->token();
+
+        app('db')->table('oauth_refresh_tokens')
+                ->where('access_token_id', $access_token->id)
+                ->update([
+                    'revoked' => true,
+                ]);
+
+        app('cookie')->forget('refreshToken');
+
+        $access_token->revoke();
+
+        return response()->json([
+            'message' => 'Logout!'
+        ], 204);
+    }
+
+    public function refresh()
+    {
+        $refreshToken = request()->cookie('refreshToken');
+
+        return $this->proxy('refresh_token', [
+            'refresh_token' => $refreshToken
+        ]);
     }
 }
 
