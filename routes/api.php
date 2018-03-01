@@ -23,4 +23,6 @@ Route::get('/posts/{post}', 'PostController@show');
 Route::post('/register', 'Auth\RegisterController@register');
 Route::post('/login', 'Auth\LoginController@login');
 Route::post('/logout', 'Auth\LoginController@logout')->middleware('auth:api');
+Route::post('/user/profile/update', 'ProfileController@update')->middleware('auth:api');
+Route::post('/user/password/update', 'PasswordController@update')->middleware('auth:api');
 Route::post('/token/refresh', 'Auth\LoginController@refresh');

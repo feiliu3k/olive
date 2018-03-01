@@ -52,6 +52,13 @@ class TokenProxy
     {
         $user = auth()->guard('api')->user();
 
+        if (is_null($user)) {
+            app('cookie')->queue(app('cookie')->forget('refreshToken'));
+
+            return response()->json([
+                'message' => 'Logout!'
+            ], 204);
+        }
         $access_token = $user->token();
 
         app('db')->table('oauth_refresh_tokens')
@@ -60,7 +67,7 @@ class TokenProxy
                     'revoked' => true,
                 ]);
 
-        app('cookie')->forget('refreshToken');
+        app('cookie')->queue(app('cookie')->forget('refreshToken'));
 
         $access_token->revoke();
 

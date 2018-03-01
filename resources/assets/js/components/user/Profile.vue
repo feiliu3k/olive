@@ -1,25 +1,32 @@
 <template>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <div class="card card-default">
-                    <div class="card-header">
-                        <h4>用户登录进来的主页</h4>
-                    </div>
-
-                    <div class="card-body">
-                        <strong>这是用户的主页，需要登录进来才能查看</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="card card-default">
+        <ul class="list-group">
+            <li class="list-group-item">
+                用户名
+                <br>
+                <h4>{{ user.name }}</h4>
+            </li>
+            <li class="list-group-item">
+                邮箱
+                <br>
+                <h4>{{ user.email }}</h4>
+            </li>
+        </ul>
     </div>
 </template>
 
 <script>
+    import {mapState} from 'vuex'
+
     export default {
-        mounted() {
-            console.log('Component profile.')
+        name: 'profile',
+        created() {
+            this.$store.dispatch('setAuthUser')
+        },
+        computed: {
+            ...mapState({
+                user: state => state.AuthUser
+            })
         }
     }
 </script>
