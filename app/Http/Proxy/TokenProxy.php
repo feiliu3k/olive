@@ -19,7 +19,7 @@ class TokenProxy
             'grant_type'     => $grantType
         ]);
 
-        $response = $this->http->post('http://olive.test/oauth/token', [
+        $response = $this->http->post(config('app.url').'/oauth/token', [
             'form_params'=>$data
         ]);
 
