@@ -11,6 +11,17 @@
 |
 */
 
-Route::get('/{any}', function () {
-    return view('layouts.app');
-})->where(['any' => '.*']);
+// Route::get('/{any}', function () {
+//     return view('layouts.app');
+// })->where(['any' => '.*']);
+
+
+Route::get('/', function(){
+	return 'index';
+});
+
+Route::prefix('api')->group(function () {
+    Route::get('index', function () {
+		return 'api.index';        
+    });
+});
