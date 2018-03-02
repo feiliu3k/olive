@@ -6,7 +6,6 @@
                 <div class="card-body">
                     <div v-for="post in posts" :key="post.id" class="bs-callout bs-callout-danger">
                         <h4><router-link :to="{name: 'posts', params:{id: post.id}} ">{{ post.title }}</router-link></h4>
-
                         <p>{{ post.body }}</p>
                     </div>
                 </div>
@@ -20,6 +19,8 @@
         created() {
             axios.get('/api/posts').then(response =>{
                 this.posts = response.data.data
+            }).catch(errors => {
+                console.log(errors.response)
             })
         },
         data() {
