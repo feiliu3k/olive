@@ -74,6 +74,8 @@
                 axios.post('/api/register', formData).then(response => {
                     this.$router.push({
                         name: 'confirm'
+                    }).catch(errors => {
+                        console.log(errors.response)
                     })
                 })
             }
