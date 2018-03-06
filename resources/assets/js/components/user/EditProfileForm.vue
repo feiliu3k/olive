@@ -29,7 +29,10 @@
 </template>
 
 <script>
+    import jwtToken from './../../helpers/jwt'
+    import { ErrorBag } from 'vee-validate'
     import * as types from './../../store/mutation-type'
+
 
     export default {
         name: "edit-profile-form",
